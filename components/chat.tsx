@@ -79,6 +79,78 @@ export default function Chat() {
     inputRef.current?.focus();
   }, []);
 
+  if (messages.length === 0) {
+    return (
+      <div className="stretch mx-auto flex w-full max-w-xl flex-col py-24">
+        <div className="items-strart mb-4 flex whitespace-pre-wrap p-2">
+          <div
+            className={cn(
+              "flex size-8 shrink-0 select-none items-center justify-center rounded-lg border shadow",
+              "bg-primary text-primary-foreground",
+            )}>
+            <BsNvidia />
+          </div>
+          <Markdown className="prose prose-sm dark:prose-invert prose-pre:bg-zinc-200 prose-pre:text-primary dark:prose-pre:bg-zinc-900 prose-pre:text-wrap prose-headings:m-0 prose-p:m-0 prose-ul:m-0 prose-blockquote:m-0 prose-ol:m-0 prose-img:m-0 ml-6">
+            Hello, I am Nvidia. It's nice to meet you. How can I help you today?
+          </Markdown>
+        </div>
+
+        <form
+        onSubmit={handleSubmit}
+        className="fixed bottom-0 left-0 right-0 flex justify-center bg-gradient-to-t from-zinc-100 to-transparent backdrop-blur-lg dark:from-black/70">
+        <div className="mb-3 mt-6 w-full max-w-2xl items-center px-6">
+          <div className="relative flex w-full items-center">
+            <Textarea
+              ref={inputRef}
+              name="message"
+              rows={1}
+              maxRows={5}
+              tabIndex={0}
+              placeholder="Ask me anything..."
+              spellCheck={false}
+              value={input}
+              className="rounded-fill min-h-12 w-full resize-none rounded-full border border-input bg-muted pb-1 pl-4 pr-10 pt-3 text-sm shadow-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+              onChange={handleInputChange}
+              onKeyDown={(e) => {
+                if (
+                  e.key === "Enter" &&
+                  !e.shiftKey &&
+                  !e.nativeEvent.isComposing
+                ) {
+                  e.preventDefault();
+                  if (input.trim().length > 0) {
+                    handleSubmit(
+                      e as unknown as React.FormEvent<HTMLFormElement>,
+                    );
+                  }
+                }
+              }}
+            />
+            <Button
+              type="submit"
+              size="icon"
+              variant="ghost"
+              className="absolute right-2 top-1/2 -translate-y-1/2 transform"
+              disabled={input.length === 0}>
+              <AiOutlineEnter size={20} />
+            </Button>
+          </div>
+          <p className="p-4 text-center text-xs">
+            This is a demo chatbot. Built by{" "}
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 transition-all duration-150 ease-linear md:hover:text-emerald-600 dark:md:hover:text-emerald-300"
+              href="https://lakshb.dev">
+              lakshb.dev
+            </a>
+          </p>
+        </div>
+      </form>
+      </div>
+    );
+  }
+
   return (
     <div className="stretch mx-auto flex w-full max-w-xl flex-col py-24">
       {messages.map((m) => (
@@ -99,45 +171,57 @@ export default function Chat() {
           </Markdown>
         </div>
       ))}
-    
+
       <form
         onSubmit={handleSubmit}
-        className="fixed bottom-0 mb-12 w-full max-w-2xl px-6">
-        <div className="relative flex w-full items-center">
-          <Textarea
-            ref={inputRef}
-            name="message"
-            rows={1}
-            maxRows={5}
-            tabIndex={0}
-            placeholder="Ask me anything..."
-            spellCheck={false}
-            value={input}
-            className="rounded-fill min-h-12 w-full resize-none rounded-md border border-input bg-muted pb-1 pl-4 pr-10 pt-3 text-sm shadow-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
-            onChange={handleInputChange}
-            onKeyDown={(e) => {
-              if (
-                e.key === "Enter" &&
-                !e.shiftKey &&
-                !e.nativeEvent.isComposing
-              ) {
-                e.preventDefault();
-                if (input.trim().length > 0) {
-                  handleSubmit(
-                    e as unknown as React.FormEvent<HTMLFormElement>,
-                  );
+        className="fixed bottom-0 left-0 right-0 flex justify-center bg-gradient-to-t from-zinc-100 to-transparent backdrop-blur-lg dark:from-black/70">
+        <div className="mb-3 mt-6 w-full max-w-2xl items-center px-6">
+          <div className="relative flex w-full items-center">
+            <Textarea
+              ref={inputRef}
+              name="message"
+              rows={1}
+              maxRows={5}
+              tabIndex={0}
+              placeholder="Ask me anything..."
+              spellCheck={false}
+              value={input}
+              className="rounded-fill min-h-12 w-full resize-none rounded-full border border-input bg-muted pb-1 pl-4 pr-10 pt-3 text-sm shadow-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+              onChange={handleInputChange}
+              onKeyDown={(e) => {
+                if (
+                  e.key === "Enter" &&
+                  !e.shiftKey &&
+                  !e.nativeEvent.isComposing
+                ) {
+                  e.preventDefault();
+                  if (input.trim().length > 0) {
+                    handleSubmit(
+                      e as unknown as React.FormEvent<HTMLFormElement>,
+                    );
+                  }
                 }
-              }
-            }}
-          />
-          <Button
-            type="submit"
-            size="icon"
-            variant="ghost"
-            className="absolute right-2 top-1/2 -translate-y-1/2 transform"
-            disabled={input.length === 0}>
-            <AiOutlineEnter size={20} />
-          </Button>
+              }}
+            />
+            <Button
+              type="submit"
+              size="icon"
+              variant="ghost"
+              className="absolute right-2 top-1/2 -translate-y-1/2 transform"
+              disabled={input.length === 0}>
+              <AiOutlineEnter size={20} />
+            </Button>
+          </div>
+          <p className="p-4 text-center text-xs">
+            This is a demo chatbot. Built by{" "}
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 transition-all duration-150 ease-linear md:hover:text-emerald-600 dark:md:hover:text-emerald-300"
+              href="https://lakshb.dev">
+              lakshb.dev
+            </a>
+          </p>
         </div>
       </form>
     </div>
