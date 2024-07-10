@@ -1,78 +1,32 @@
 "use client";
-
 import { cn } from "@/lib/utils";
 import { useChat } from "ai/react";
-import ChatInput from "./chat-input";
-import Markdown from "react-markdown";
 import { BsNvidia } from "react-icons/bs";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { FaUserAstronaut } from "react-icons/fa";
 import { IoLogoVercel } from "react-icons/io5";
-
-export const chatSample = {
-  messages: [
-    {
-      id: 1,
-      role: "user",
-      content: "Hello, I am a user.",
-    },
-    {
-      id: 2,
-      role: "nvidia",
-      content:
-        "Hello, I am Nvidia. It's nice to meet you. How can I help you today?",
-    },
-    {
-      id: 3,
-      role: "user",
-      content: "I need help with my graphics card.",
-    },
-    {
-      id: 4,
-      role: "nvidia",
-      content:
-        "Sure, what seems to be the problem? Can you provide more details? What is the model of your graphics card? What is the issue you are experiencing? When did the issue start? Have you tried any troubleshooting steps? If so, what were the results?",
-    },
-
-    // markdown example with code block
-
-    {
-      id: 5,
-      role: "user",
-      content: "I am having trouble installing the drivers.",
-    },
-    {
-      id: 6,
-      role: "nvidia",
-      content: `Here are some common troubleshooting steps to resolve driver installation issues:
-
-1. Download the latest drivers from the Nvidia website.
-2. Uninstall the existing drivers using the Display Driver Uninstaller (DDU) tool.
-3. Reboot your computer.
-4. Install the latest drivers.
-5. Reboot your computer again.
-- ahah
-
-If you are still experiencing issues, please provide more details about the error messages or symptoms you are encountering
-\`\`\`
-Error: Unable to install drivers
-Symptoms: Screen flickering, artifacts, crashes
-\`\`\`
-
-This will help us diagnose the issue and provide you with more specific guidance.`,
-    },
-  ],
-};
+import { marked } from "marked";
+import ChatInput from "./chat-input";
 
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat();
+  const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit: originalHandleSubmit,
+  } = useChat();
 
-  // const messages = chatSample.messages;
-  // const input = "";
-  // const handleInputChange = () => {};
-  // const handleSubmit = () => {};
+  const [model, setModel] = useState("llama3-8b-8192");
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      originalHandleSubmit(e, { options: { body: { model } } });
+    },
+    [originalHandleSubmit, model],
+  );
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -93,6 +47,8 @@ export default function Chat() {
 
         <ChatInput
           input={input}
+          model={model}
+          setModel={setModel}
           inputRef={inputRef}
           handleInputChange={handleInputChange}
           handleSubmit={handleSubmit}
@@ -102,11 +58,11 @@ export default function Chat() {
   }
 
   return (
-    <div className="stretch mx-auto flex w-full max-w-xl flex-col py-24">
+    <div className="stretch mx-auto flex w-full max-w-xl flex-col py-[10rem] pt-24">
       {messages.map((m) => (
         <div
           key={m.id}
-          className="items-strart mb-4 flex whitespace-pre-wrap p-2">
+          className="mb-4 flex items-start whitespace-pre-wrap p-2">
           <div
             className={cn(
               "flex size-8 shrink-0 select-none items-center justify-center rounded-lg",
@@ -116,14 +72,17 @@ export default function Chat() {
             )}>
             {m.role === "user" ? <FaUserAstronaut /> : <BsNvidia />}
           </div>
-          <Markdown className="prose prose-sm dark:prose-invert prose-pre:bg-zinc-200 prose-pre:text-primary dark:prose-pre:bg-zinc-900 prose-pre:text-wrap prose-headings:m-0 prose-p:m-0 prose-ul:m-0 prose-blockquote:m-0 prose-ol:m-0 prose-img:m-0 ml-6">
-            {m.content}
-          </Markdown>
+          <div
+            dangerouslySetInnerHTML={{ __html: marked(m.content) }}
+            className="prose prose-sm ml-6 dark:prose-invert prose-headings:m-0 prose-p:m-0 prose-blockquote:m-0 prose-pre:text-wrap prose-pre:bg-zinc-200 prose-pre:text-primary prose-ol:m-0 prose-ul:m-0 prose-img:m-0 dark:prose-pre:bg-zinc-900"
+          />
         </div>
       ))}
 
       <ChatInput
         input={input}
+        model={model}
+        setModel={setModel}
         inputRef={inputRef}
         handleInputChange={handleInputChange}
         handleSubmit={handleSubmit}
