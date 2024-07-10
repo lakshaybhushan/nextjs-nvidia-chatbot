@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
-import { DM_Sans } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 import Nav from "@/components/nav";
+import type { Metadata } from "next";
+import { Figtree } from "next/font/google";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "sonner";
 
-const DM_SansFont = DM_Sans({ subsets: ["latin"] });
+const FigtreeFont = Figtree({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "nvidia-nim-chatbot",
@@ -19,13 +20,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${DM_SansFont.className} min-h-screen font-light selection:bg-blue-700 selection:text-white`}>
+        className={`${FigtreeFont.className} min-h-screen font-light selection:bg-blue-700 selection:text-white`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange>
           <Nav />
+          <Toaster />
           {children}
         </ThemeProvider>
       </body>

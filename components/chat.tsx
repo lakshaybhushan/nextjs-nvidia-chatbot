@@ -10,6 +10,7 @@ import { readStreamableValue } from "ai/rsc";
 import { FaUserAstronaut } from "react-icons/fa6";
 import { IoLogoVercel } from "react-icons/io5";
 import { continueConversation } from "../app/actions";
+import { toast } from "sonner";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -17,7 +18,8 @@ export const maxDuration = 30;
 export default function Chat() {
   const [messages, setMessages] = useState<CoreMessage[]>([]);
   const [input, setInput] = useState("");
-  const [model, setModel] = useState("llama3-8b-8192");
+  // const [model, setModel] = useState("google/gemma-2-9b-it");
+  const [model, setModel] = useState("gemma2-9b-it");
 
   const handleModelChange = (newModel: string) => {
     setModel(newModel);
@@ -36,24 +38,28 @@ export default function Chat() {
     setMessages(newMessages);
     setInput("");
 
-    const result = await continueConversation(newMessages, model);
+    try {
+      const result = await continueConversation(newMessages, model);
 
-    for await (const content of readStreamableValue(result)) {
-      setMessages([
-        ...newMessages,
-        {
-          role: "assistant",
-          content: content as string,
-        },
-      ]);
+      for await (const content of readStreamableValue(result)) {
+        setMessages([
+          ...newMessages,
+          {
+            role: "assistant",
+            content: content as string,
+          },
+        ]);
+      }
+    } catch (error) {
+      toast.error((error as Error).message);
     }
   };
 
   if (messages.length === 0) {
     return (
-      <div className="stretch mx-auto flex w-full max-w-xl flex-col items-center py-24">
-        <h1 className="text-center text-5xl font-bold tracking-tighter">
-          Nvidia NIM + Vercel AI SDK Chatbot Demo
+      <div className="stretch mx-auto mt-48 flex w-full max-w-xl flex-col items-center py-24">
+        <h1 className="text-center text-5xl font-medium tracking-tighter">
+          NVIDIA NIM + Vercel AI SDK Chatbot Demo
         </h1>
 
         <div className="mt-6 flex items-center justify-center gap-4">
