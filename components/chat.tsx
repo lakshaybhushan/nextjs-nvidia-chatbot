@@ -1,36 +1,53 @@
 "use client";
+
 import { cn } from "@/lib/utils";
-import { useChat } from "ai/react";
+import { useState } from "react";
+import { type CoreMessage } from "ai";
+import Markdown from "react-markdown";
 import { BsNvidia } from "react-icons/bs";
-import { useRef, useEffect, useState, useCallback } from "react";
-import { FaUserAstronaut } from "react-icons/fa";
-import { IoLogoVercel } from "react-icons/io5";
-import { marked } from "marked";
 import ChatInput from "./chat-input";
+import { readStreamableValue } from "ai/rsc";
+import { FaUserAstronaut } from "react-icons/fa6";
+import { IoLogoVercel } from "react-icons/io5";
+import { continueConversation } from "../app/actions";
+
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
 export default function Chat() {
-  const {
-    messages,
-    input,
-    handleInputChange,
-    handleSubmit: originalHandleSubmit,
-  } = useChat();
-
+  const [messages, setMessages] = useState<CoreMessage[]>([]);
+  const [input, setInput] = useState("");
   const [model, setModel] = useState("llama3-8b-8192");
 
-  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const handleModelChange = (newModel: string) => {
+    setModel(newModel);
+    setMessages([]);
+  };
 
-  const handleSubmit = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      originalHandleSubmit(e, { options: { body: { model } } });
-    },
-    [originalHandleSubmit, model],
-  );
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (input.trim().length === 0) return;
 
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    const newMessages: CoreMessage[] = [
+      ...messages,
+      { content: input, role: "user" },
+    ];
+
+    setMessages(newMessages);
+    setInput("");
+
+    const result = await continueConversation(newMessages, model);
+
+    for await (const content of readStreamableValue(result)) {
+      setMessages([
+        ...newMessages,
+        {
+          role: "assistant",
+          content: content as string,
+        },
+      ]);
+    }
+  };
 
   if (messages.length === 0) {
     return (
@@ -47,22 +64,19 @@ export default function Chat() {
 
         <ChatInput
           input={input}
-          model={model}
-          setModel={setModel}
-          inputRef={inputRef}
-          handleInputChange={handleInputChange}
+          setInput={setInput}
           handleSubmit={handleSubmit}
+          model={model}
+          handleModelChange={handleModelChange}
         />
       </div>
     );
   }
 
   return (
-    <div className="stretch mx-auto flex w-full max-w-xl flex-col py-[10rem] pt-24">
-      {messages.map((m) => (
-        <div
-          key={m.id}
-          className="mb-4 flex items-start whitespace-pre-wrap p-2">
+    <div className="stretch mx-auto flex w-full max-w-xl flex-col py-[8rem] pt-24">
+      {messages.map((m, i) => (
+        <div key={i} className="items-strart mb-4 flex whitespace-pre-wrap p-2">
           <div
             className={cn(
               "flex size-8 shrink-0 select-none items-center justify-center rounded-lg",
@@ -72,20 +86,18 @@ export default function Chat() {
             )}>
             {m.role === "user" ? <FaUserAstronaut /> : <BsNvidia />}
           </div>
-          <div
-            dangerouslySetInnerHTML={{ __html: marked(m.content) }}
-            className="prose prose-sm ml-6 dark:prose-invert prose-headings:m-0 prose-p:m-0 prose-blockquote:m-0 prose-pre:text-wrap prose-pre:bg-zinc-200 prose-pre:text-primary prose-ol:m-0 prose-ul:m-0 prose-img:m-0 dark:prose-pre:bg-zinc-900"
-          />
+          <Markdown className="prose prose-sm ml-6 dark:prose-invert prose-headings:m-0 prose-p:m-0 prose-blockquote:m-0 prose-pre:text-wrap prose-pre:bg-zinc-200 prose-pre:text-primary prose-ol:m-0 prose-ul:m-0 prose-img:m-0 dark:prose-pre:bg-zinc-900">
+            {m.content as string}
+          </Markdown>
         </div>
       ))}
 
       <ChatInput
         input={input}
-        model={model}
-        setModel={setModel}
-        inputRef={inputRef}
-        handleInputChange={handleInputChange}
+        setInput={setInput}
         handleSubmit={handleSubmit}
+        model={model}
+        handleModelChange={handleModelChange}
       />
     </div>
   );

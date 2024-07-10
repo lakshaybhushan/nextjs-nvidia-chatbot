@@ -2,36 +2,31 @@ import { AiOutlineEnter } from "react-icons/ai";
 import { Button } from "./ui/button";
 import Textarea from "react-textarea-autosize";
 import { FaMeta, FaGoogle } from "react-icons/fa6";
+import { ChevronDown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown } from "lucide-react";
 
-type ChatInputProps = {
+type ChatInputRSCProps = {
   input: string;
-  inputRef: React.RefObject<HTMLTextAreaElement>;
-  handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  setInput: (input: string) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   model: string;
-  setModel: React.Dispatch<React.SetStateAction<string>>;
+  handleModelChange: (model: string) => void;
 };
 
 export default function ChatInput({
   input,
-  model,
-  inputRef,
-  setModel,
-  handleInputChange,
+  setInput,
   handleSubmit,
-}: ChatInputProps) {
+  model,
+  handleModelChange,
+}: ChatInputRSCProps) {
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="fixed bottom-0 left-0 right-0 flex justify-center bg-gradient-to-t from-zinc-100 to-transparent backdrop-blur-lg dark:from-black/70"
-    >
+    <form onSubmit={handleSubmit} className="fixed bottom-0 left-0 right-0 flex justify-center bg-gradient-to-t from-zinc-100 to-transparent backdrop-blur-lg dark:from-black/80">
       <div className="mt-4 w-full max-w-2xl items-center px-6">
         <div className="relative flex w-full flex-col items-start gap-2">
           <DropdownMenu modal={false}>
@@ -50,17 +45,16 @@ export default function ChatInput({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onSelect={() => setModel("llama3-8b-8192")}>
+              <DropdownMenuItem onSelect={() => handleModelChange("llama3-8b-8192")}>
                 <FaMeta className="mr-1.5" /> llama3-8b-8192
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setModel("gemma-7b-it")}>
+              <DropdownMenuItem onSelect={() => handleModelChange("gemma-7b-it")}>
                 <FaGoogle className="mr-1.5" /> gemma-7b-it
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <div className="relative flex w-full items-center">
             <Textarea
-              ref={inputRef}
               name="message"
               rows={1}
               maxRows={5}
@@ -69,18 +63,12 @@ export default function ChatInput({
               spellCheck={false}
               value={input}
               className="min-h-12 w-full resize-none rounded-[28px] border border-input bg-muted pb-1 pl-4 pr-10 pt-3 text-sm shadow-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#74B202] focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
-              onChange={handleInputChange}
+              onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
-                if (
-                  e.key === "Enter" &&
-                  !e.shiftKey &&
-                  !e.nativeEvent.isComposing
-                ) {
+                if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
                   e.preventDefault();
                   if (input.trim().length > 0) {
-                    handleSubmit(
-                      e as unknown as React.FormEvent<HTMLFormElement>
-                    );
+                    handleSubmit(e as unknown as React.FormEvent<HTMLFormElement>);
                   }
                 }
               }}
