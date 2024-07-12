@@ -62,10 +62,24 @@ export default function Chat() {
 
   if (messages.length === 0) {
     return (
-      // <div className="stretch mx-auto mt-28 flex w-full max-w-xl flex-col items-center px-8 pb-[10rem] md:px-0 md:pt-16">
-      <div className="stretch mx-auto flex min-h-screen w-full max-w-xl flex-col justify-center px-4 pb-[8rem] md:pt-[4rem] xl:pt-[2rem] pt-[6rem] md:px-0">
+      <div className="stretch mx-auto flex min-h-screen w-full max-w-xl flex-col justify-center px-4 pb-[8rem] pt-[6rem] md:px-0 md:pt-[4rem] xl:pt-[2rem]">
         <h1 className="text-center text-5xl font-medium tracking-tighter">
-          NVIDIA NIM + Vercel AI SDK Chatbot Demo
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-nvidia transition-all duration-150 ease-linear"
+            href="https://build.nvidia.com/explore/discover">
+            NVIDIA NIM
+          </a>{" "}
+          +{" "}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-all duration-150 ease-linear hover:text-blue-600"
+            href="https://sdk.vercel.ai/">
+            Vercel AI SDK
+          </a>{" "}
+          Chatbot Demo
         </h1>
 
         <div className="mt-6 flex items-center justify-center gap-4">
@@ -75,13 +89,13 @@ export default function Chat() {
         </div>
 
         <div className="mt-6 px-3 md:px-0">
-          <h2 className="text-base font-medium">Note:</h2>
+          <h2 className="text-base font-medium">Points to note:</h2>
           <ul className="ml-6 mt-2 flex list-disc flex-col items-start gap-2.5 text-sm text-primary/80">
             <li>
               Since the NVIDIA&apos;s NIM API Inference only provides{" "}
               <span className="text-nvidia font-medium">1000 credits</span> for
-              free, I&apos;ve implemented a rate limiter to prevent abuse. If you
-              encounter a rate limit, you can try again{" "}
+              free, I&apos;ve implemented a rate limiter to prevent abuse. If
+              you encounter a rate limit, you can try again{" "}
               <span className="text-nvidia font-medium">after an hour</span> has
               elapsed.
             </li>
@@ -130,7 +144,7 @@ export default function Chat() {
           <div className="ml-4 flex-1 space-y-2 overflow-hidden px-1">
             <MemoizedReactMarkdown
               remarkPlugins={[remarkGfm]}
-              className="prose prose-sm break-words dark:prose-invert prose-code:text-wrap prose-pre:rounded-lg prose-pre:bg-zinc-900 prose-pre:p-4 prose-pre:text-zinc-100">
+              className="prose prose-sm break-words dark:prose-invert prose-pre:rounded-lg prose-pre:bg-zinc-100 prose-pre:p-4 prose-pre:text-zinc-900 dark:prose-pre:bg-zinc-900 dark:prose-pre:text-zinc-100">
               {m.content as string}
             </MemoizedReactMarkdown>
           </div>

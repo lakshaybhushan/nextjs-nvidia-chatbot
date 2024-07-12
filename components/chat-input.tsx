@@ -1,5 +1,5 @@
 import { Button } from "./ui/button";
-import { BsMicrosoft, BsNvidia } from "react-icons/bs";
+import { BsNvidia } from "react-icons/bs";
 import { ChevronDown } from "lucide-react";
 import Textarea from "react-textarea-autosize";
 import { AiOutlineEnter } from "react-icons/ai";
@@ -105,7 +105,7 @@ export default function ChatInput({
           <a
             target="_blank"
             rel="noopener noreferrer"
-            className="underline underline-offset-2 transition-all duration-150 ease-linear md:hover:text-emerald-600 dark:md:hover:text-emerald-300"
+            className="md:hover:text-nvidia underline underline-offset-2 transition-all duration-150 ease-linear"
             href="https://lakshb.dev">
             lakshb.dev
           </a>
