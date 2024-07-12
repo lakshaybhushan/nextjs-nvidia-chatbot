@@ -1,4 +1,4 @@
-const idToRequestCount = new Map<string, number>(); // keeps track of individual users
+const idToRequestCount = new Map<string, number>();
 const rateLimiter = {
   windowStart: Date.now(),
   windowSize: 60 * 60 * 1000, // Milliseconds (currently 1 Hour)
@@ -13,7 +13,6 @@ export const rateLimit = (ip: string) => {
     idToRequestCount.set(ip, 0);
   }
 
-  // Check and update current request limits
   const currentRequestCount = idToRequestCount.get(ip) ?? 0;
   if (currentRequestCount >= rateLimiter.maxRequests) return true;
   idToRequestCount.set(ip, currentRequestCount + 1);

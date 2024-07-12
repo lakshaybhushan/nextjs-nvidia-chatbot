@@ -1,9 +1,8 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { type CoreMessage } from "ai";
-import Markdown from "react-markdown";
 import { BsNvidia } from "react-icons/bs";
 import ChatInput from "./chat-input";
 import { readStreamableValue } from "ai/rsc";
@@ -11,6 +10,8 @@ import { FaUserAstronaut } from "react-icons/fa6";
 import { IoLogoVercel } from "react-icons/io5";
 import { continueConversation } from "../app/actions";
 import { toast } from "sonner";
+import remarkGfm from "remark-gfm";
+import { MemoizedReactMarkdown } from "./markdown";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -20,6 +21,7 @@ export default function Chat() {
   const [input, setInput] = useState("");
   // const [model, setModel] = useState("google/gemma-2-9b-it");
   const [model, setModel] = useState("gemma2-9b-it");
+  const messageEndRef = useRef<HTMLDivElement>(null);
 
   const handleModelChange = (newModel: string) => {
     setModel(newModel);
@@ -55,9 +57,13 @@ export default function Chat() {
     }
   };
 
+  useEffect(() => {
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   if (messages.length === 0) {
     return (
-      <div className="stretch mx-auto mt-48 flex w-full max-w-xl flex-col items-center py-24">
+      <div className="stretch mx-auto mt-28 flex w-full max-w-xl flex-col items-center px-8 pb-[10rem] md:px-0 md:pt-16">
         <h1 className="text-center text-5xl font-medium tracking-tighter">
           NVIDIA NIM + Vercel AI SDK Chatbot Demo
         </h1>
@@ -66,6 +72,30 @@ export default function Chat() {
           <BsNvidia className="mr-4 size-20 text-[#74B202]" />
           <span className="text-8xl">+</span>
           <IoLogoVercel className="size-20" />
+        </div>
+
+        <div className="mt-6">
+          <h2 className="text-base font-medium">Instructions:</h2>
+          <ul className="ml-6 mt-2 flex list-disc flex-col items-start gap-2.5 text-sm text-primary/80">
+            <li>
+              Since the NVIDIA's NIM API Inference only provides{" "}
+              <span className="font-medium text-[#74B202]">1000 credits</span>{" "}
+              for free, I've implemented a rate limiter to prevent abuse. If you
+              encounter a rate limit, you can try again{" "}
+              <span className="font-medium text-[#74B202]">after an hour</span>{" "}
+              has elapsed.
+            </li>
+            <li>
+              This chatbot is for demonstration purposes only and is not
+              affiliated with either NVIDIA or Vercel. It uses the NVIDIA NIM
+              API and Vercel AI SDK.
+            </li>
+            <li>
+              All the logos and trademarks are the properties of their
+              respective owners. I do not own any of them. This is a
+              non-commercial project.
+            </li>
+          </ul>
         </div>
 
         <ChatInput
@@ -80,9 +110,9 @@ export default function Chat() {
   }
 
   return (
-    <div className="stretch mx-auto flex w-full max-w-xl flex-col py-[8rem] pt-24">
+    <div className="stretch mx-auto w-full max-w-2xl px-4 py-[8rem] pt-24 md:px-0">
       {messages.map((m, i) => (
-        <div key={i} className="items-strart mb-4 flex whitespace-pre-wrap p-2">
+        <div key={i} className="mb-4 flex items-start p-2">
           <div
             className={cn(
               "flex size-8 shrink-0 select-none items-center justify-center rounded-lg",
@@ -92,12 +122,16 @@ export default function Chat() {
             )}>
             {m.role === "user" ? <FaUserAstronaut /> : <BsNvidia />}
           </div>
-          <Markdown className="prose prose-sm ml-6 dark:prose-invert prose-headings:m-0 prose-p:m-0 prose-blockquote:m-0 prose-pre:text-wrap prose-pre:bg-zinc-200 prose-pre:text-primary prose-ol:m-0 prose-ul:m-0 prose-img:m-0 dark:prose-pre:bg-zinc-900">
-            {m.content as string}
-          </Markdown>
+          <div className="ml-4 flex-1 space-y-2 overflow-hidden px-1">
+            <MemoizedReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              className="prose prose-sm break-words dark:prose-invert prose-code:text-wrap prose-pre:rounded-lg prose-pre:bg-zinc-900 prose-pre:p-4 prose-pre:text-zinc-100">
+              {m.content as string}
+            </MemoizedReactMarkdown>
+          </div>
         </div>
       ))}
-
+      <div ref={messageEndRef} />
       <ChatInput
         input={input}
         setInput={setInput}

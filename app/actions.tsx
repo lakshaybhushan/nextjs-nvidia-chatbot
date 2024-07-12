@@ -13,23 +13,25 @@ const nim = createOpenAI({
   apiKey: process.env.GROQ_API_KEY,
 });
 
-export async function continueConversation(messages: CoreMessage[], model: string) {
-
+export async function continueConversation(
+  messages: CoreMessage[],
+  model: string,
+) {
   const ip = headers().get("x-forwarded-for") ?? "unknown";
   const isRateLimited = rateLimit(ip);
 
   if (isRateLimited) {
     console.log("Rate limited");
-    throw new Error("Rate limited");
+    throw new Error(`Rate Limit Exceeded for ${ip}`);
   }
 
   const result = await streamText({
     model: nim(model),
     messages,
-    temperature: 0.8, // MUST
-    topP: 0.7, // MUST
-    maxTokens: 1024, // MUST
     // Otherwise, the model will not be able to generate a response
+    temperature: 0.8,
+    topP: 0.7,
+    maxTokens: 1024,
   });
 
   const stream = createStreamableValue(result.textStream);

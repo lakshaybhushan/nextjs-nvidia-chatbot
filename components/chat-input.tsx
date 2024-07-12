@@ -29,8 +29,8 @@ export default function ChatInput({
   return (
     <form
       onSubmit={handleSubmit}
-      className="fixed bottom-0 left-0 right-0 flex justify-center bg-gradient-to-t from-zinc-100 to-transparent backdrop-blur-lg dark:from-black/80">
-      <div className="mt-4 w-full max-w-2xl items-center px-6">
+      className="fixed bottom-0 left-0 right-0 flex justify-center bg-gradient-to-t from-zinc-100 to-transparent backdrop-blur-lg dark:from-background">
+      <div className="w-full max-w-2xl items-center px-6">
         <div className="relative flex w-full flex-col items-start gap-2">
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
@@ -68,11 +68,15 @@ export default function ChatInput({
                 <FaGoogle className="mr-1.5" /> gemma-2b
               </DropdownMenuItem>
               <DropdownMenuItem
-                onSelect={() => handleModelChange("nvidia/llama3-chatqa-1.5-70b")}>
+                onSelect={() =>
+                  handleModelChange("nvidia/llama3-chatqa-1.5-70b")
+                }>
                 <BsNvidia className="mr-1.5" /> llama3-chatqa-1.5-70b
               </DropdownMenuItem>
               <DropdownMenuItem
-                onSelect={() => handleModelChange("nvidia/llama3-chatqa-1.5-8b")}>
+                onSelect={() =>
+                  handleModelChange("nvidia/llama3-chatqa-1.5-8b")
+                }>
                 <BsNvidia className="mr-1.5" /> llama3-chatqa-1.5-8b
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -83,7 +87,7 @@ export default function ChatInput({
               rows={1}
               maxRows={5}
               tabIndex={0}
-              placeholder="Ask me anything..."
+              placeholder="Try asking me something!"
               spellCheck={false}
               value={input}
               className="min-h-12 w-full resize-none rounded-[28px] border border-input bg-muted pb-1 pl-4 pr-10 pt-3 text-sm shadow-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#74B202] focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
