@@ -19,8 +19,7 @@ export const maxDuration = 30;
 export default function Chat() {
   const [messages, setMessages] = useState<CoreMessage[]>([]);
   const [input, setInput] = useState("");
-  // const [model, setModel] = useState("google/gemma-2-9b-it");
-  const [model, setModel] = useState("gemma2-9b-it");
+  const [model, setModel] = useState("google/gemma-2-9b-it");
   const messageEndRef = useRef<HTMLDivElement>(null);
 
   const handleModelChange = (newModel: string) => {
@@ -63,32 +62,38 @@ export default function Chat() {
 
   if (messages.length === 0) {
     return (
-      <div className="stretch mx-auto mt-28 flex w-full max-w-xl flex-col items-center px-8 pb-[10rem] md:px-0 md:pt-16">
+      // <div className="stretch mx-auto mt-28 flex w-full max-w-xl flex-col items-center px-8 pb-[10rem] md:px-0 md:pt-16">
+      <div className="stretch mx-auto flex min-h-screen w-full max-w-xl flex-col justify-center px-4 pb-[8rem] md:pt-[4rem] xl:pt-[2rem] pt-[6rem] md:px-0">
         <h1 className="text-center text-5xl font-medium tracking-tighter">
           NVIDIA NIM + Vercel AI SDK Chatbot Demo
         </h1>
 
         <div className="mt-6 flex items-center justify-center gap-4">
-          <BsNvidia className="mr-4 size-20 text-[#74B202]" />
+          <BsNvidia className="text-nvidia mr-4 size-20" />
           <span className="text-8xl">+</span>
           <IoLogoVercel className="size-20" />
         </div>
 
-        <div className="mt-6">
-          <h2 className="text-base font-medium">Instructions:</h2>
+        <div className="mt-6 px-3 md:px-0">
+          <h2 className="text-base font-medium">Note:</h2>
           <ul className="ml-6 mt-2 flex list-disc flex-col items-start gap-2.5 text-sm text-primary/80">
             <li>
-              Since the NVIDIA's NIM API Inference only provides{" "}
-              <span className="font-medium text-[#74B202]">1000 credits</span>{" "}
-              for free, I've implemented a rate limiter to prevent abuse. If you
+              Since the NVIDIA&apos;s NIM API Inference only provides{" "}
+              <span className="text-nvidia font-medium">1000 credits</span> for
+              free, I&apos;ve implemented a rate limiter to prevent abuse. If you
               encounter a rate limit, you can try again{" "}
-              <span className="font-medium text-[#74B202]">after an hour</span>{" "}
-              has elapsed.
+              <span className="text-nvidia font-medium">after an hour</span> has
+              elapsed.
+            </li>
+            <li>
+              By testing any model, you assume the risk of any harm caused by
+              any response or output of the model. Please do not upload any
+              confidential information or personal data. Your use is logged for
+              security.
             </li>
             <li>
               This chatbot is for demonstration purposes only and is not
-              affiliated with either NVIDIA or Vercel. It uses the NVIDIA NIM
-              API and Vercel AI SDK.
+              affiliated with either NVIDIA or Vercel in any way.
             </li>
             <li>
               All the logos and trademarks are the properties of their
@@ -118,7 +123,7 @@ export default function Chat() {
               "flex size-8 shrink-0 select-none items-center justify-center rounded-lg",
               m.role === "user"
                 ? "border bg-background"
-                : "border border-[#628f10] bg-[#74B202] text-primary-foreground",
+                : "bg-nvidia border border-[#628f10] text-primary-foreground",
             )}>
             {m.role === "user" ? <FaUserAstronaut /> : <BsNvidia />}
           </div>

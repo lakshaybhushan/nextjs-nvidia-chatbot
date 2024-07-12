@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${FigtreeFont.className} min-h-screen font-light selection:bg-[#74B202] selection:text-white`}>
+        className={`${FigtreeFont.className} selection:bg-nvidia min-h-screen font-light selection:text-white`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

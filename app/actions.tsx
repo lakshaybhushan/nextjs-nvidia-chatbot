@@ -7,10 +7,8 @@ import { rateLimit } from "@/lib/ratelimit";
 import { headers } from "next/headers";
 
 const nim = createOpenAI({
-  // baseURL: "https://integrate.api.nvidia.com/v1",
-  // apiKey: process.env.NVIDIA_NIM_API_KEY,
-  baseURL: "https://api.groq.com/openai/v1",
-  apiKey: process.env.GROQ_API_KEY,
+  baseURL: "https://integrate.api.nvidia.com/v1",
+  apiKey: process.env.NVIDIA_NIM_API_KEY,
 });
 
 export async function continueConversation(
@@ -28,7 +26,6 @@ export async function continueConversation(
   const result = await streamText({
     model: nim(model),
     messages,
-    // Otherwise, the model will not be able to generate a response
     temperature: 0.8,
     topP: 0.7,
     maxTokens: 1024,

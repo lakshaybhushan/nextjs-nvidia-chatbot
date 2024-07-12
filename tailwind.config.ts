@@ -19,6 +19,7 @@ const config = {
     },
     extend: {
       colors: {
+        nvidia: "#74B202",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

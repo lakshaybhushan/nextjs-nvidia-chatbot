@@ -1,15 +1,29 @@
 import { Button } from "./ui/button";
-import { BsNvidia } from "react-icons/bs";
+import { BsMicrosoft, BsNvidia } from "react-icons/bs";
 import { ChevronDown } from "lucide-react";
 import Textarea from "react-textarea-autosize";
 import { AiOutlineEnter } from "react-icons/ai";
 import { FaMeta, FaGoogle } from "react-icons/fa6";
+import { SiIbm } from "react-icons/si";
+import { models } from "@/lib/models";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+const getModelIcon = (modelName: string) => {
+  if (modelName.startsWith("meta")) {
+    return <FaMeta className="mr-1.5" />;
+  } else if (modelName.startsWith("google")) {
+    return <FaGoogle className="mr-1.5" />;
+  } else if (modelName.startsWith("ibm")) {
+    return <SiIbm className="mr-1.5" />;
+  } else {
+    return <BsNvidia className="mr-1.5" />;
+  }
+};
 
 type ChatInputRSCProps = {
   input: string;
@@ -35,50 +49,19 @@ export default function ChatInput({
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="rounded-full">
-                {model.charAt(0) === "l" ? (
-                  <>
-                    <FaMeta className="mr-1.5" />
-                    {model}
-                  </>
-                ) : model.charAt(0) === "g" ? (
-                  <>
-                    <FaGoogle className="mr-1.5" />
-                    {model}
-                  </>
-                ) : (
-                  <>
-                    <BsNvidia className="mr-1.5" />
-                    {model}
-                  </>
-                )}
+                {getModelIcon(model)}
+                {model}
                 <ChevronDown size={14} className="ml-1.5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem
-                onSelect={() => handleModelChange("llama3-8b-8192")}>
-                <FaMeta className="mr-1.5" /> llama3-8b-8192
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={() => handleModelChange("gemma-7b-it")}>
-                <FaGoogle className="mr-1.5" /> gemma-7b-it
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={() => handleModelChange("google/gemma-2b")}>
-                <FaGoogle className="mr-1.5" /> gemma-2b
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={() =>
-                  handleModelChange("nvidia/llama3-chatqa-1.5-70b")
-                }>
-                <BsNvidia className="mr-1.5" /> llama3-chatqa-1.5-70b
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={() =>
-                  handleModelChange("nvidia/llama3-chatqa-1.5-8b")
-                }>
-                <BsNvidia className="mr-1.5" /> llama3-chatqa-1.5-8b
-              </DropdownMenuItem>
+              {models.map((modelName) => (
+                <DropdownMenuItem
+                  key={modelName}
+                  onSelect={() => handleModelChange(modelName)}>
+                  {getModelIcon(modelName)} {modelName}
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
           <div className="relative flex w-full items-center">
@@ -90,7 +73,7 @@ export default function ChatInput({
               placeholder="Try asking me something!"
               spellCheck={false}
               value={input}
-              className="min-h-12 w-full resize-none rounded-[28px] border border-input bg-muted pb-1 pl-4 pr-10 pt-3 text-sm shadow-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#74B202] focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+              className="focus-visible:ring-nvidia min-h-12 w-full resize-none rounded-[28px] border border-input bg-muted pb-1 pl-4 pr-10 pt-3 text-sm shadow-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
                 if (
@@ -118,7 +101,7 @@ export default function ChatInput({
           </div>
         </div>
         <p className="p-2 text-center text-xs text-zinc-400">
-          This is a demo chatbot. Built by{" "}
+          Brought to you by{" "}
           <a
             target="_blank"
             rel="noopener noreferrer"
